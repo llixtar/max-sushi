@@ -7,9 +7,23 @@ export function HeroBanner() {
   const { locale } = useI18n();
 
   const scrollToMenu = () => {
-    const el = document.getElementById('category-mini-maki') || document.querySelector('section');
+    const el = document.getElementById('catalog-active-category') || document.getElementById('category-mini-maki') || document.querySelector('section');
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      const headerEl = document.querySelector('header');
+      const stickyNavEl = document.querySelector('.sticky.z-30') as HTMLElement | null;
+      const totalStickyHeight = (headerEl?.offsetHeight || 105) + (stickyNavEl?.offsetHeight || 60);
+      const safetyMargin = 15;
+      const totalOffset = totalStickyHeight + safetyMargin;
+
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = el.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = Math.max(0, elementPosition - totalOffset);
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
     }
   };
 

@@ -255,8 +255,8 @@ export function StickyNav({
       style={{ top: `${headerHeight}px` }}
       className="sticky z-30 w-full bg-[#07070a]/95 backdrop-blur-xl border-b border-white/10 transition-all shadow-md shadow-black/40"
     >
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative flex items-center h-12 sm:h-14">
-        {/* Кнопка випадаючого списку категорій: повноцінна стильна кнопка "Меню" у формі клинка */}
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative flex items-center h-14 sm:h-15">
+        {/* Кнопка випадаючого списку категорій: збільшена, зручна для пальців */}
         <div className="relative shrink-0 z-20 flex items-center my-auto" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen((prev) => !prev)}
@@ -266,17 +266,17 @@ export function StickyNav({
               clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
             }}
             className={cn(
-              'flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm font-extrabold shrink-0 mr-2 sm:mr-3 transition-all duration-200 cursor-pointer shadow-sm group select-none',
+              'flex items-center gap-2 px-3.5 sm:px-4 py-2.5 sm:py-2.5 min-h-[44px] text-sm sm:text-base font-black shrink-0 mr-2 sm:mr-3 transition-all duration-200 cursor-pointer shadow-sm group select-none',
               isDropdownOpen
                 ? 'bg-[#e50914] text-white shadow-lg shadow-[#e50914]/40 scale-[1.02]'
-                : 'bg-[#18181f] hover:bg-[#22222b] text-white border border-white/20 hover:border-[#e50914]'
+                : 'bg-[#18181f] hover:bg-[#22222b] text-white border border-white/20 hover:border-[#e50914] active:scale-95'
             )}
           >
-            <LayoutGrid className={cn('w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform duration-200', isDropdownOpen ? 'rotate-90 text-white' : 'text-[#e50914] group-hover:scale-110')} />
+            <LayoutGrid className={cn('w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform duration-200', isDropdownOpen ? 'rotate-90 text-white' : 'text-[#e50914] group-hover:scale-110')} />
             <span className="tracking-wide">
               {locale === 'pl' ? 'Menu' : 'Меню'}
             </span>
-            <ChevronDown className={cn('w-3 h-3 sm:w-3.5 sm:h-3.5 text-zinc-400 group-hover:text-white transition-transform duration-200', isDropdownOpen && 'rotate-180 text-white')} />
+            <ChevronDown className={cn('w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 group-hover:text-white transition-transform duration-200', isDropdownOpen && 'rotate-180 text-white')} />
           </button>
 
           {/* Прозорий повнорозмірний бекдроп для безпечного закриття меню без відкриття карток під ним */}
