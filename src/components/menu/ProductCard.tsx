@@ -24,6 +24,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const setSelectedProduct = useCartStore((s) => s.setSelectedProduct);
   const activeCardId = useCartStore((s) => s.activeCardId);
   const setActiveCardId = useCartStore((s) => s.setActiveCardId);
+  const isMenuOpen = useCartStore((s) => s.isMenuOpen);
 
   const cartItem = mounted ? items.find((item) => item.product.id === product.id) : undefined;
   const quantity = cartItem?.quantity || 0;
@@ -71,64 +72,78 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <div
       ref={cardRef}
-      onClick={() => setSelectedProduct(product)}
-      className="group relative flex flex-col justify-between p-3.5 sm:p-4 rounded-xl bg-[#0d0d12]/90 hover:bg-[#14141d] border border-white/5 hover:border-white/20 transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-black/70 cursor-pointer select-none"
+      onClick={() => {
+        if (isMenuOpen) return;
+        setSelectedProduct(product);
+      }}
+      style={{
+        clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)',
+      }}
+      className="group relative p-[1px] bg-white/10 hover:bg-[#e50914]/50 transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-[#e50914]/15 cursor-pointer select-none"
     >
-      {/* Верхня частина: Назва + Блок інгредієнтів (та фото для звичайних ролів) */}
-      <div>
-        {/* Назва ролу або додатку капсом (відцентрована) */}
-        <h3 className="text-sm sm:text-base font-black uppercase tracking-wide text-white text-center group-hover:text-[#e50914] transition-colors leading-tight mb-2.5">
+      {/* Внутрішній блок картки з аналогічною самурайською формою */}
+      <div
+        style={{
+          clipPath: 'polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px)',
+        }}
+        className="w-full h-full flex flex-col justify-between p-4 sm:p-5 bg-[#0d0d12] group-hover:bg-[#13131c] transition-colors duration-300"
+      >
+      {/* Верхня частина: Кругле зображення по центру, потім назва, вага/шматочки та склад */}
+      <div className="flex flex-col items-center text-center">
+        {/* Кругле фото ролу по центру зверху */}
+        {!isDodatki ? (
+          <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-black/80 border border-white/10 group-hover:border-[#e50914]/40 flex items-center justify-center p-2 mb-3.5 transition-all duration-300 group-hover:scale-105 shadow-lg shadow-black/80">
+            <img
+              src={product.image}
+              alt={product.name[locale]}
+              loading="lazy"
+              className="w-full h-full object-contain filter drop-shadow-[0_6px_12px_rgba(0,0,0,0.9)]"
+            />
+          </div>
+        ) : (
+          <div className="w-16 h-16 rounded-full bg-[#181824] border border-white/10 flex items-center justify-center text-[#e50914] font-black text-xl mb-3">
+            +
+          </div>
+        )}
+
+        {/* Назва ролу або додатку */}
+        <h3 className="text-base sm:text-lg font-black tracking-wide text-white group-hover:text-[#e50914] transition-colors leading-tight mb-1.5 line-clamp-1">
           {product.name[locale]}
         </h3>
 
-        {/* Стовпчик інгредієнтів та опис */}
-        {isDodatki ? (
-          <div className="flex flex-col items-center text-center py-2 px-1">
-            <span className="text-[11px] sm:text-xs text-zinc-400 font-medium uppercase tracking-wider">
-              {product.ingredients[locale][0] || (locale === 'pl' ? 'DODATKOWY' : 'ДОДАТКОВИЙ')}
-            </span>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between gap-3 sm:gap-4 pr-1.5 sm:pr-3">
-            {/* Склад ролу стовпчиком */}
-            <div className="flex flex-col gap-0.5 text-[10px] sm:text-[11px] text-zinc-400 font-medium uppercase tracking-wider leading-snug">
-              {product.ingredients[locale].map((ingredient, idx) => (
-                <span key={idx}>{ingredient}</span>
-              ))}
-            </div>
+        {/* Характеристики (шматочки / вага) */}
+        <div className="flex items-center justify-center gap-2 text-xs font-semibold text-zinc-400 mb-2">
+          {product.pieces && (
+            <span>{product.pieces} {locale === 'pl' ? 'szt.' : 'шт.'}</span>
+          )}
+          {product.pieces && product.weight && <span>•</span>}
+          {product.weight && (
+            <span>{product.weight} {isDodatki && product.id.includes('sos') ? 'ml' : 'g'}</span>
+          )}
+        </div>
 
-            {/* Кругле фото ролу на чорному тлі праворуч */}
-            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden bg-black border border-white/10 group-hover:border-white/25 flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-105 shadow-inner flex-shrink-0">
-              <img
-                src={product.image}
-                alt={product.name[locale]}
-                loading="lazy"
-                className="w-full h-full object-contain filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]"
-              />
-            </div>
-          </div>
-        )}
+        {/* Склад ролу через крапочки або комки */}
+        <p className="text-[11px] sm:text-xs text-zinc-400/90 font-normal leading-relaxed line-clamp-2 px-1 mb-2">
+          {product.ingredients[locale].join(' • ')}
+        </p>
       </div>
 
-      {/* Нижня частина: Центрована ціна та центрована кнопка замовлення */}
+      {/* Нижня частина: Ціна зліва, Кнопка до кошика справа (по краях) */}
       <div
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
-        className="mt-3 pt-2.5 border-t border-white/5 flex flex-col items-center text-center gap-2"
+        className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between gap-2"
       >
-        <div className="w-full text-center">
-          <div className="text-base sm:text-lg font-black text-white tracking-tight leading-tight">
+        <div className="text-left shrink-0">
+          <div className="text-lg sm:text-xl font-black text-white tracking-tight leading-none">
             {formattedPrice}
-          </div>
-          <div className="text-[9px] sm:text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-0.5">
-            {piecesText}
           </div>
         </div>
 
-        {/* Фіксована висота h-8 (32px), щоб сітка ніколи не стрибала при зміні стану */}
-        <div className="w-full h-8 flex items-center justify-center">
+        {/* Фіксована висота h-9 (36px), кнопка притиснута до правого краю зі скошеними кутами */}
+        <div className="h-9 flex items-center justify-end shrink-0">
           {quantity === 0 ? (
-            /* Якщо товар не в кошику — звичайна кнопка "Do koszyka" */
+            /* Якщо товар не в кошику — стильна кнопка "+ Do koszyka" зі скошеними самурайськими кутами */
             <button
               type="button"
               onClick={(e) => {
@@ -136,14 +151,22 @@ export function ProductCard({ product }: ProductCardProps) {
                 addItem(product);
                 setActiveCardId(product.id);
               }}
-              className="h-8 flex items-center justify-center gap-1.5 px-4 rounded-lg bg-[#e50914] hover:bg-[#f4222d] text-white text-xs font-bold shadow-sm shadow-[#e50914]/25 hover:shadow-[#e50914]/40 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+              style={{
+                clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
+              }}
+              className="h-9 flex items-center justify-center gap-1.5 px-3.5 sm:px-4.5 bg-gradient-to-r from-[#e50914] via-[#f4222d] to-[#b80710] hover:brightness-110 text-white text-xs sm:text-sm font-black shadow-md shadow-[#e50914]/30 hover:shadow-[#e50914]/50 active:scale-95 transition-all cursor-pointer whitespace-nowrap select-none"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-4 h-4" />
               <span>{t.product.addToCart}</span>
             </button>
           ) : isEditing ? (
-            /* Режим швидкої зміни кількості з ідентичною висотою h-8 */
-            <div className="h-8 inline-flex items-center gap-1 bg-[#171722] border border-emerald-500/50 rounded-lg p-0.5 shadow-sm shadow-emerald-500/10 animate-in fade-in zoom-in-95 duration-150">
+            /* Режим швидкої зміни кількості зі скошеними кутами */
+            <div
+              style={{
+                clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
+              }}
+              className="h-9 inline-flex items-center gap-1 bg-[#171722] border border-[#e50914]/50 p-0.5 shadow-sm shadow-[#e50914]/20 animate-in fade-in zoom-in-95 duration-150"
+            >
               <button
                 type="button"
                 onClick={(e) => {
@@ -153,7 +176,7 @@ export function ProductCard({ product }: ProductCardProps) {
                   if (next <= 0) setActiveCardId(null);
                 }}
                 aria-label="Зменшити"
-                className="flex items-center justify-center w-7 h-7 rounded-md bg-white/5 hover:bg-white/15 text-zinc-300 hover:text-white transition-colors cursor-pointer"
+                className="flex items-center justify-center w-7 h-7 bg-white/5 hover:bg-white/15 text-zinc-300 hover:text-white transition-colors cursor-pointer"
               >
                 <Minus className="w-3.5 h-3.5" />
               </button>
@@ -167,26 +190,30 @@ export function ProductCard({ product }: ProductCardProps) {
                   updateQuantity(product.id, quantity + 1);
                 }}
                 aria-label="Збільшити"
-                className="flex items-center justify-center w-7 h-7 rounded-md bg-[#e50914] hover:bg-[#f4222d] text-white transition-colors cursor-pointer shadow-sm shadow-[#e50914]/30"
+                className="flex items-center justify-center w-7 h-7 bg-[#e50914] hover:bg-[#f4222d] text-white transition-colors cursor-pointer shadow-sm shadow-[#e50914]/30"
               >
                 <Plus className="w-3.5 h-3.5" />
               </button>
             </div>
           ) : (
-            /* Коли фокус перейшов на інший рол — охайна кнопка "W koszyku (N)" тієї ж висоти h-8 */
+            /* Коли фокус перейшов на інший рол — кнопка "W koszyku (N)" зі скошеними кутами */
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveCardId(product.id);
               }}
-              className="h-8 flex items-center justify-center gap-1.5 px-3.5 rounded-lg bg-emerald-500/15 border border-emerald-500/40 hover:bg-emerald-500/25 text-emerald-300 text-xs font-bold shadow-sm transition-all cursor-pointer whitespace-nowrap active:scale-95 animate-in fade-in duration-150"
+              style={{
+                clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
+              }}
+              className="h-9 flex items-center justify-center gap-1.5 px-3.5 bg-emerald-500/20 border border-emerald-500/50 hover:bg-emerald-500/30 text-emerald-300 text-xs font-black shadow-sm transition-all cursor-pointer whitespace-nowrap active:scale-95 animate-in fade-in duration-150 select-none"
             >
               <Check className="w-3.5 h-3.5 stroke-[3]" />
               <span>{locale === 'pl' ? `W koszyku (${quantity})` : `У кошику (${quantity})`}</span>
             </button>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

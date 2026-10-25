@@ -197,8 +197,13 @@ export function CheckoutModal() {
             </p>
           </div>
 
-          {/* Інформаційна картка замовлення */}
-          <div className="max-w-md mx-auto p-5 rounded-2xl bg-[#171722] border border-white/10 text-left space-y-3">
+          {/* Інформаційна картка замовлення у формі клинка */}
+          <div
+            style={{
+              clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)',
+            }}
+            className="max-w-md mx-auto p-5 bg-[#171722] border border-white/10 text-left space-y-3"
+          >
             <div className="flex justify-between items-center pb-2 border-b border-white/5">
               <span className="text-xs text-zinc-400">{t.checkout.orderNumber}</span>
               <span className="text-sm font-black text-[#e50914]">{createdOrder.id}</span>
@@ -231,7 +236,10 @@ export function CheckoutModal() {
 
           <button
             onClick={handleClose}
-            className="w-full max-w-md py-3.5 px-6 rounded-xl bg-[#e50914] hover:bg-[#f4222d] text-white font-bold text-sm shadow-lg shadow-[#e50914]/30 transition-all cursor-pointer"
+            style={{
+              clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)',
+            }}
+            className="w-full max-w-md py-3.5 px-6 bg-[#e50914] hover:bg-[#f4222d] text-white font-black text-sm shadow-lg shadow-[#e50914]/30 hover:shadow-[#e50914]/50 transition-all cursor-pointer select-none"
           >
             {t.checkout.backToMenu}
           </button>
@@ -239,7 +247,7 @@ export function CheckoutModal() {
       ) : (
         /* Форма замовлення */
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5 sm:space-y-4 max-w-full">
-          {/* Вибір: Доставка чи Самовивіз */}
+          {/* Вибір: Доставка чи Самовивіз у формі клинка */}
           <div>
             <div className="grid grid-cols-2 gap-2 sm:gap-3">
               <button
@@ -248,7 +256,10 @@ export function CheckoutModal() {
                   setDeliveryMethod('delivery');
                   setValue('deliveryMethod', 'delivery');
                 }}
-                className={`flex items-center justify-center gap-2 p-2.5 sm:p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                style={{
+                  clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)',
+                }}
+                className={`flex items-center justify-center gap-2 p-2.5 sm:p-3 border text-center transition-all cursor-pointer select-none ${
                   deliveryMethod === 'delivery'
                     ? 'bg-[#e50914]/15 border-[#e50914] text-white shadow-xs'
                     : 'bg-[#181822] border-white/5 text-zinc-400 hover:text-white'
@@ -267,7 +278,10 @@ export function CheckoutModal() {
                   setDeliveryMethod('pickup');
                   setValue('deliveryMethod', 'pickup');
                 }}
-                className={`flex items-center justify-center gap-2 p-2.5 sm:p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                style={{
+                  clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)',
+                }}
+                className={`flex items-center justify-center gap-2 p-2.5 sm:p-3 border text-center transition-all cursor-pointer select-none ${
                   deliveryMethod === 'pickup'
                     ? 'bg-[#e50914]/15 border-[#e50914] text-white shadow-xs'
                     : 'bg-[#181822] border-white/5 text-zinc-400 hover:text-white'
@@ -364,14 +378,17 @@ export function CheckoutModal() {
             </div>
           )}
 
-          {/* Спосіб оплати: компактний горизонтальний ряд */}
+          {/* Спосіб оплати: компактний горизонтальний ряд у формі клинка */}
           <div className="space-y-1.5">
             <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
               {t.checkout.paymentTitle}
             </span>
             <div className="grid grid-cols-3 gap-2">
               <label
-                className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 p-2 sm:p-2.5 rounded-xl border cursor-pointer transition-all ${
+                style={{
+                  clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
+                }}
+                className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 p-2 sm:p-2.5 border cursor-pointer transition-all select-none ${
                   selectedPayment === 'blik_online'
                     ? 'bg-[#e50914]/15 border-[#e50914] text-white shadow-xs'
                     : 'bg-[#171720] border-white/5 text-zinc-400 hover:text-white'
@@ -388,7 +405,10 @@ export function CheckoutModal() {
               </label>
 
               <label
-                className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 p-2 sm:p-2.5 rounded-xl border cursor-pointer transition-all ${
+                style={{
+                  clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
+                }}
+                className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 p-2 sm:p-2.5 border cursor-pointer transition-all select-none ${
                   selectedPayment === 'card_courier'
                     ? 'bg-[#e50914]/15 border-[#e50914] text-white shadow-xs'
                     : 'bg-[#171720] border-white/5 text-zinc-400 hover:text-white'
@@ -405,7 +425,10 @@ export function CheckoutModal() {
               </label>
 
               <label
-                className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 p-2 sm:p-2.5 rounded-xl border cursor-pointer transition-all ${
+                style={{
+                  clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
+                }}
+                className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 p-2 sm:p-2.5 border cursor-pointer transition-all select-none ${
                   selectedPayment === 'cash'
                     ? 'bg-[#e50914]/15 border-[#e50914] text-white shadow-xs'
                     : 'bg-[#171720] border-white/5 text-zinc-400 hover:text-white'
@@ -441,12 +464,15 @@ export function CheckoutModal() {
               id="order-comment"
               type="text"
               placeholder={t.checkout.commentPlaceholder}
-              className="w-full rounded-xl border border-zinc-800 bg-[#0d0d12] px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:border-[#e50914] focus:outline-none focus:ring-1 focus:ring-[#e50914]"
+              style={{
+                clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)',
+              }}
+              className="w-full border border-zinc-800 bg-[#0d0d12] px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:border-[#e50914] focus:outline-none focus:ring-1 focus:ring-[#e50914]"
               {...register('comment')}
             />
           </div>
 
-          {/* Підсумок замовлення та кнопка відправки в одному компактному блоці */}
+          {/* Підсумок замовлення та кнопка відправки у формі клинка */}
           <div className="pt-2 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-baseline gap-2">
               <span className="text-xs text-zinc-400 font-medium">{t.cart.total}:</span>
@@ -462,7 +488,10 @@ export function CheckoutModal() {
               type="submit"
               disabled={isSubmitting || items.length === 0}
               id="submit-order-button"
-              className="flex-1 sm:max-w-xs flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl bg-gradient-to-r from-[#e50914] to-[#f4222d] hover:brightness-110 text-white font-bold text-sm shadow-md shadow-[#e50914]/30 disabled:opacity-50 transition-all cursor-pointer"
+              style={{
+                clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)',
+              }}
+              className="flex-1 sm:max-w-xs flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 bg-gradient-to-r from-[#e50914] via-[#f4222d] to-[#b80710] hover:brightness-110 text-white font-black text-sm shadow-md shadow-[#e50914]/30 hover:shadow-[#e50914]/50 active:scale-[0.98] disabled:opacity-50 transition-all cursor-pointer select-none"
             >
               {isSubmitting ? (
                 <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

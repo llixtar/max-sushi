@@ -348,14 +348,19 @@ export function ProductModal() {
 
               {/* Нижня частина: вибір кількості та кнопка замовлення з ціною */}
               <div className="pt-2.5 border-t border-white/10 flex items-center gap-2.5 sm:gap-3">
-                {/* Лічильник кількості */}
-                <div className="flex items-center gap-1.5 bg-[#1a1a24] border border-white/10 rounded-xl p-1">
+                {/* Лічильник кількості у формі клинка */}
+                <div
+                  style={{
+                    clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)',
+                  }}
+                  className="flex items-center gap-1.5 bg-[#1a1a24] border border-white/10 p-1"
+                >
                   <button
                     type="button"
                     onClick={() => setModalQuantity(Math.max(1, modalQuantity - 1))}
                     disabled={isAdded}
                     aria-label="Зменшити"
-                    className="flex items-center justify-center w-7 h-7 rounded-lg bg-white/5 hover:bg-white/15 text-zinc-300 hover:text-white transition-colors cursor-pointer"
+                    className="flex items-center justify-center w-7 h-7 bg-white/5 hover:bg-white/15 text-zinc-300 hover:text-white transition-colors cursor-pointer"
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
@@ -367,21 +372,24 @@ export function ProductModal() {
                     onClick={() => setModalQuantity(modalQuantity + 1)}
                     disabled={isAdded}
                     aria-label="Збільшити"
-                    className="flex items-center justify-center w-7 h-7 rounded-lg bg-white/5 hover:bg-white/15 text-zinc-300 hover:text-white transition-colors cursor-pointer"
+                    className="flex items-center justify-center w-7 h-7 bg-[#e50914] hover:bg-[#f4222d] text-white transition-colors cursor-pointer shadow-sm shadow-[#e50914]/30"
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                {/* Головна кнопка додавання з підтвердженням */}
+                {/* Головна кнопка додавання у формі клинка */}
                 <button
                   type="button"
                   onClick={handleAddToCart}
                   disabled={isAdded}
-                  className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-3 sm:px-4 rounded-xl font-bold text-xs sm:text-sm shadow-lg transition-all cursor-pointer whitespace-nowrap ${
+                  style={{
+                    clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)',
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-3 px-3 sm:px-4 font-black text-xs sm:text-sm shadow-lg transition-all cursor-pointer whitespace-nowrap select-none ${
                     isAdded
                       ? 'bg-emerald-600 text-white shadow-emerald-500/30 scale-[1.02]'
-                      : 'bg-[#e50914] hover:bg-[#f4222d] text-white shadow-[#e50914]/30 hover:shadow-[#e50914]/50 active:scale-[0.98]'
+                      : 'bg-gradient-to-r from-[#e50914] via-[#f4222d] to-[#b80710] hover:brightness-110 text-white shadow-[#e50914]/30 hover:shadow-[#e50914]/50 active:scale-[0.98]'
                   }`}
                 >
                   {isAdded ? (

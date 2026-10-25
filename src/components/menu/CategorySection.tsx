@@ -35,8 +35,8 @@ export function CategorySection({ category, products }: CategorySectionProps) {
         </span>
       </div>
 
-      {/* Сітка меню: 3 колонки на десктопі, 2 на планшетах, 1 на смартфонах */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+      {/* Сітка меню: 4 колонки на великих моніторах, 3 на лептопах, 2 на планшетах, 1 на смартфонах */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

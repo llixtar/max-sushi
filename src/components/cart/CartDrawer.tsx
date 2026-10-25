@@ -60,7 +60,10 @@ export function CartDrawer() {
           </p>
           <button
             onClick={() => setOpen(false)}
-            className="px-6 py-3 rounded-xl bg-[#e50914] hover:bg-[#f4222d] text-white font-semibold text-sm shadow-lg shadow-[#e50914]/30 transition-all cursor-pointer"
+            style={{
+              clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)',
+            }}
+            className="px-6 py-3 bg-[#e50914] hover:bg-[#f4222d] text-white font-bold text-sm shadow-lg shadow-[#e50914]/30 hover:shadow-[#e50914]/50 active:scale-95 transition-all cursor-pointer"
           >
             {t.cart.browseMenu}
           </button>
@@ -125,19 +128,24 @@ export function CartDrawer() {
                     {t.cart.chopsticks}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 bg-[#1b1b24] border border-white/10 rounded-lg p-1">
+                <div
+                  style={{
+                    clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)',
+                  }}
+                  className="flex items-center gap-2 bg-[#1b1b24] border border-white/10 p-1"
+                >
                   <button
                     onClick={() => setPersonsCount(personsCount - 1)}
-                    className="w-6 h-6 flex items-center justify-center rounded bg-white/5 hover:bg-white/15 text-zinc-300 text-xs font-bold cursor-pointer"
+                    className="w-6 h-6 flex items-center justify-center bg-white/5 hover:bg-white/15 text-zinc-300 text-xs font-bold cursor-pointer transition-colors"
                   >
                     -
                   </button>
-                  <span className="text-xs font-bold text-white min-w-[20px] text-center">
+                  <span className="text-xs font-bold text-white min-w-[20px] text-center select-none">
                     {personsCount} {t.cart.persons}
                   </span>
                   <button
                     onClick={() => setPersonsCount(personsCount + 1)}
-                    className="w-6 h-6 flex items-center justify-center rounded bg-[#e50914] text-white text-xs font-bold cursor-pointer"
+                    className="w-6 h-6 flex items-center justify-center bg-[#e50914] hover:bg-[#f4222d] text-white text-xs font-bold cursor-pointer transition-colors"
                   >
                     +
                   </button>
@@ -172,13 +180,17 @@ export function CartDrawer() {
               </div>
             </div>
 
+            {/* Головна кнопка оформлення замовлення у формі клинка */}
             <button
               onClick={handleProceedToCheckout}
               id="proceed-to-checkout-btn"
-              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#e50914] to-[#f4222d] hover:brightness-110 text-white font-bold text-sm sm:text-base shadow-lg shadow-[#e50914]/30 active:scale-[0.99] transition-all cursor-pointer"
+              style={{
+                clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)',
+              }}
+              className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-gradient-to-r from-[#e50914] via-[#f4222d] to-[#b80710] hover:brightness-110 text-white font-black text-sm sm:text-base shadow-lg shadow-[#e50914]/30 hover:shadow-[#e50914]/50 active:scale-[0.99] transition-all cursor-pointer select-none"
             >
               <span>{t.cart.checkout}</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 stroke-[2.5]" />
             </button>
           </div>
         </div>

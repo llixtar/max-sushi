@@ -1,9 +1,26 @@
 'use client';
 
-import React from 'react';
 import { useI18n } from '@/lib/i18nContext';
 import { brandTheme } from '@/config/theme';
 import { Phone, MapPin, Clock, Heart } from 'lucide-react';
+
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
 
 export function Footer() {
   const { locale, t } = useI18n();
@@ -57,24 +74,28 @@ export function Footer() {
             </div>
 
             {/* Соціальні мережі */}
-            <div className="pt-2 flex flex-col gap-1 text-xs">
+            <div className="pt-2 flex flex-col gap-2 text-xs">
               <a
                 href={brandTheme.contacts.socials.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5"
+                className="text-zinc-400 hover:text-white transition-colors flex items-center gap-2 group"
               >
-                <span className="w-4 h-4 rounded-full bg-blue-600/30 text-blue-400 flex items-center justify-center font-bold text-[10px]">f</span>
-                <span>{brandTheme.contacts.socials.facebookHandle}</span>
+                <span className="w-5 h-5 rounded-md bg-[#1877F2]/20 border border-[#1877F2]/40 text-[#1877F2] group-hover:bg-[#1877F2] group-hover:text-white flex items-center justify-center font-bold text-xs transition-colors">
+                  f
+                </span>
+                <span className="group-hover:text-white font-medium">{brandTheme.contacts.socials.facebookHandle}</span>
               </a>
               <a
                 href={brandTheme.contacts.socials.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5"
+                className="text-zinc-400 hover:text-white transition-colors flex items-center gap-2 group"
               >
-                <span className="w-4 h-4 rounded-full bg-pink-600/30 text-pink-400 flex items-center justify-center font-bold text-[10px]">📸</span>
-                <span>{brandTheme.contacts.socials.instagramHandle}</span>
+                <span className="w-5 h-5 rounded-md bg-gradient-to-tr from-[#f9ce34]/20 via-[#ee2a7b]/20 to-[#6228d7]/20 border border-[#ee2a7b]/40 text-[#ee2a7b] group-hover:bg-gradient-to-tr group-hover:from-[#f9ce34] group-hover:via-[#ee2a7b] group-hover:to-[#6228d7] group-hover:text-white flex items-center justify-center transition-all p-0.5">
+                  <InstagramIcon className="w-3.5 h-3.5" />
+                </span>
+                <span className="group-hover:text-white font-medium">{brandTheme.contacts.socials.instagramHandle}</span>
               </a>
             </div>
           </div>

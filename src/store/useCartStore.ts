@@ -25,6 +25,8 @@ interface CartState {
 
   activeCardId: string | null;
   setActiveCardId: (id: string | null) => void;
+  isMenuOpen: boolean;
+  setIsMenuOpen: (open: boolean) => void;
 
   // Обчислення
   getTotalCount: () => number;
@@ -44,6 +46,8 @@ export const useCartStore = create<CartState>()(
       personsCount: 1,
       activeCardId: null,
       setActiveCardId: (id: string | null) => set({ activeCardId: id }),
+      isMenuOpen: false,
+      setIsMenuOpen: (open: boolean) => set({ isMenuOpen: open }),
 
       addItem: (product: Product, quantity = 1) => {
         set((state) => {

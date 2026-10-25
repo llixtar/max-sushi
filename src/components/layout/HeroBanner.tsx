@@ -31,46 +31,47 @@ export function HeroBanner() {
       {/* Верхня частина з заголовком — відцентрована */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-4 sm:pt-6">
         <div className="max-w-5xl mx-auto text-center px-2">
-          {/* Акцентований заголовок у гармонійному теплому шовковому кольорі слонової кістки / шампань */}
+          {/* Акцентований заголовок у сучасному преміальному шрифті Unbounded (ідеально для кирилиці та латиниці) */}
           <h1 
-            style={{ fontFamily: 'var(--font-syne), "Syne", sans-serif' }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#fdf8f4] tracking-tight leading-[1.12] drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] max-w-full break-words"
+            style={{ fontFamily: 'var(--font-unbounded), "Unbounded", sans-serif' }}
+            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#fdf8f4] tracking-tight leading-[1.15] drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] max-w-full break-words"
           >
             {locale === 'pl' ? 'Najlepsze Sushi w Świdnicy' : 'Найкращі Суші у Свідниці'}
           </h1>
         </div>
       </div>
 
-      {/* Середня частина: Акцентна кнопка зі скошеними кутами (самурайський меч / катана стиль) */}
+      {/* Середня частина: Велика акцентна червона кнопка зі скошеними кутами (самурайський стиль) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full my-auto py-8 sm:py-12">
         <div className="flex items-center justify-center">
           <button
             onClick={scrollToMenu}
-            className="animate-auto-pulse group relative inline-flex items-center justify-center p-[2px] sm:p-[2.5px] hover:scale-105 active:scale-95 cursor-pointer transition-transform duration-300 drop-shadow-[0_0_20px_rgba(229,9,20,0.35)]"
+            aria-label={locale === 'pl' ? 'Wybierz rolki' : 'Обрати роли'}
+            className="animate-auto-pulse group relative inline-flex items-center justify-center p-[2.5px] sm:p-[3px] hover:scale-105 active:scale-95 cursor-pointer transition-all duration-300 drop-shadow-[0_0_35px_rgba(229,9,20,0.6)]"
             style={{
-              clipPath: 'polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px)',
+              clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)',
             }}
           >
             {/* Обертовий яскравий світлячок по скошеному контуру */}
             <span 
               className="absolute w-[350%] h-[350%] -top-[125%] -left-[125%]"
               style={{
-                background: 'conic-gradient(from 0deg, transparent 0deg, transparent 240deg, #e50914 290deg, #ff4d58 330deg, #ffffff 360deg)',
-                animation: 'spinBeam 2.4s linear infinite',
+                background: 'conic-gradient(from 0deg, transparent 0deg, transparent 200deg, #ff8088 280deg, #ffffff 360deg)',
+                animation: 'spinBeam 2s linear infinite',
               }}
             />
 
-            {/* Внутрішнє тіло кнопки зі скошеними кутами */}
+            {/* Внутрішнє тіло кнопки: насичений фірмовий червоний фон, збільшений розмір */}
             <span 
-              className="relative flex items-center justify-center gap-2.5 px-10 sm:px-14 py-3.5 sm:py-4.5 bg-[#0a0a0f] group-hover:bg-[#12121c] transition-colors duration-300 w-full h-full"
+              className="relative flex items-center justify-center gap-3 px-8 sm:px-16 py-4 sm:py-5 bg-gradient-to-r from-[#e50914] via-[#f4222d] to-[#b80710] group-hover:brightness-110 transition-all duration-300 w-full h-full shadow-inner"
               style={{
-                clipPath: 'polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)',
+                clipPath: 'polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px)',
               }}
             >
-              <span className="text-xs sm:text-base font-black tracking-[0.25em] uppercase text-white select-none">
+              <span className="text-sm sm:text-lg font-black tracking-[0.22em] uppercase text-white select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
                 {locale === 'pl' ? 'Wybierz rolki' : 'Обрати роли'}
               </span>
-              <span className="text-[#e50914] text-sm sm:text-base font-bold group-hover:translate-x-1 transition-transform">
+              <span className="text-white text-base sm:text-xl font-black group-hover:translate-x-1.5 transition-transform drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
                 ›
               </span>
             </span>

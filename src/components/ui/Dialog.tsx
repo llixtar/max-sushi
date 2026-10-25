@@ -47,10 +47,13 @@ export function Dialog({
         onClick={onClose}
       />
 
-      {/* Modal Dialog Body */}
+      {/* Modal Dialog Body with samurai blade cut corners */}
       <div
+        style={{
+          clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)',
+        }}
         className={cn(
-          'relative z-10 w-full overflow-hidden rounded-2xl bg-[#131318] border border-white/10 shadow-2xl text-white transform transition-all animate-in zoom-in-95 duration-200 my-auto max-h-[96vh] flex flex-col',
+          'relative z-10 w-full overflow-hidden bg-[#131318] border border-white/10 shadow-2xl text-white transform transition-all animate-in zoom-in-95 duration-200 my-auto max-h-[96vh] flex flex-col',
           maxWidth,
           className
         )}
@@ -61,7 +64,10 @@ export function Dialog({
           <button
             onClick={onClose}
             aria-label="Закрити"
-            className="ml-auto inline-flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+            style={{
+              clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)',
+            }}
+            className="ml-auto inline-flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
           >
             <X className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>

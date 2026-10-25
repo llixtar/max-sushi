@@ -60,21 +60,26 @@ export function CartItem({ item }: CartItemProps) {
           <Trash2 className="w-4 h-4" />
         </button>
 
-        <div className="flex items-center gap-1.5 bg-[#1b1b24] border border-white/10 rounded-lg p-1">
+        <div
+          style={{
+            clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)',
+          }}
+          className="flex items-center gap-1.5 bg-[#1b1b24] border border-white/10 p-1"
+        >
           <button
             onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
             aria-label="Зменшити кількість"
-            className="flex items-center justify-center w-6 h-6 rounded bg-white/5 hover:bg-white/15 text-zinc-300 hover:text-white transition-colors cursor-pointer"
+            className="flex items-center justify-center w-6 h-6 bg-white/5 hover:bg-white/15 text-zinc-300 hover:text-white transition-colors cursor-pointer"
           >
             <Minus className="w-3 h-3" />
           </button>
-          <span className="text-xs font-bold text-white min-w-[18px] text-center">
+          <span className="text-xs font-bold text-white min-w-[18px] text-center select-none">
             {item.quantity}
           </span>
           <button
             onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
             aria-label="Збільшити кількість"
-            className="flex items-center justify-center w-6 h-6 rounded bg-[#e50914] text-white hover:bg-[#f4222d] transition-colors cursor-pointer"
+            className="flex items-center justify-center w-6 h-6 bg-[#e50914] text-white hover:bg-[#f4222d] transition-colors cursor-pointer"
           >
             <Plus className="w-3 h-3" />
           </button>

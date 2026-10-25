@@ -1,26 +1,70 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, LayoutGrid, ChevronDown, Check, Search, X } from 'lucide-react';
-import { categories } from '@/lib/mockData';
+import { categories, products } from '@/lib/mockData';
 import { useI18n } from '@/lib/i18nContext';
+import { useCartStore } from '@/store/useCartStore';
 import { cn } from '@/lib/utils';
 
 interface StickyNavProps {
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
+  selectedCategory?: string;
+  onSelectCategory?: (categoryId: string) => void;
 }
 
-export function StickyNav({ searchQuery = '', onSearchChange }: StickyNavProps) {
+export function StickyNav({
+  searchQuery = '',
+  onSearchChange,
+  selectedCategory,
+  onSelectCategory,
+}: StickyNavProps) {
   const { locale } = useI18n();
-  const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id || 'mini-maki');
+  const setIsMenuOpenStore = useCartStore((s) => s.setIsMenuOpen);
+  const [internalCategory, setInternalCategory] = useState<string>(categories[0]?.id || 'mini-maki');
+  const activeCategory = selectedCategory !== undefined ? selectedCategory : internalCategory;
+  const setActiveCategory = (catId: string) => {
+    if (onSelectCategory) {
+      onSelectCategory(catId);
+    } else {
+      setInternalCategory(catId);
+    }
+  };
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const closeTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Синхронізуємо стан відкритості меню зі сховищем в useEffect (захист від setState during render)
+  useEffect(() => {
+    if (isDropdownOpen) {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+      setIsMenuOpenStore(true);
+    } else {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = setTimeout(() => {
+        setIsMenuOpenStore(false);
+      }, 350);
+    }
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, [isDropdownOpen, setIsMenuOpenStore]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchBoxRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const isUserClicking = useRef(false);
+
+  // Підрахунок кількості товарів у кожній категорії для випадаючого меню
+  const categoryCounts = React.useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const cat of categories) {
+      counts[cat.id] = products.filter((p) => p.categoryId === cat.id).length;
+    }
+    return counts;
+  }, []);
 
   // Відкриття та фокус на інпуті
   const toggleSearch = () => {
@@ -73,7 +117,9 @@ export function StickyNav({ searchQuery = '', onSearchChange }: StickyNavProps) 
     isUserClicking.current = true;
     setActiveCategory(categoryId);
     setIsDropdownOpen(false);
-    const element = document.getElementById(`category-${categoryId}`);
+    
+    // Якщо компонент працює в режимі окремої сторінки під категорію (onSelectCategory передано)
+    const element = document.getElementById(`category-${categoryId}`) || document.getElementById('catalog-active-category');
     if (element) {
       // Вимірюємо точну сумарну висоту зафіксованих панелей (Header + StickyNav)
       const headerEl = document.querySelector('header') as HTMLElement | null;
@@ -100,8 +146,9 @@ export function StickyNav({ searchQuery = '', onSearchChange }: StickyNavProps) 
     }, 200);
   };
 
-  // Слухач скролу сторінки: визначає поточну категорію
+  // Слухач скролу сторінки: визначає поточну категорію (якщо на сторінці відображаються всі категорії одночасно)
   useEffect(() => {
+    if (onSelectCategory) return; // У режимі окремої сторінки категорії скрол не змінює активну вкладку
     const handleScroll = () => {
       if (isUserClicking.current) return;
       const isDesktop = window.innerWidth >= 640;
@@ -122,7 +169,7 @@ export function StickyNav({ searchQuery = '', onSearchChange }: StickyNavProps) 
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [onSelectCategory]);
 
   // Коли пошуковий запит змінюється або скидається, одразу синхронізуємо активну категорію з реальною позицією на сторінці
   useEffect(() => {
@@ -168,7 +215,7 @@ export function StickyNav({ searchQuery = '', onSearchChange }: StickyNavProps) 
   // При зміні активної категорії центруємо контейнер навігації (плавно під час скролу сторінки)
   useEffect(() => {
     if (navRef.current) {
-      const centerBtn = navRef.current.querySelector<HTMLButtonElement>('[data-is-center="true"]');
+      const centerBtn = navRef.current.querySelector<HTMLElement>('[data-is-center="true"]');
       if (centerBtn) {
         const container = navRef.current;
         const left = centerBtn.offsetLeft - container.offsetWidth / 2 + centerBtn.offsetWidth / 2;
@@ -209,16 +256,19 @@ export function StickyNav({ searchQuery = '', onSearchChange }: StickyNavProps) 
       className="sticky z-30 w-full bg-[#07070a]/95 backdrop-blur-xl border-b border-white/10 transition-all shadow-md shadow-black/40"
     >
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative flex items-center h-12 sm:h-14">
-        {/* Кнопка випадаючого списку категорій: повноцінна стильна кнопка "Меню" */}
+        {/* Кнопка випадаючого списку категорій: повноцінна стильна кнопка "Меню" у формі клинка */}
         <div className="relative shrink-0 z-20 flex items-center my-auto" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen((prev) => !prev)}
             aria-expanded={isDropdownOpen}
             title={locale === 'pl' ? 'Kategorie menu' : 'Категорії меню'}
+            style={{
+              clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
+            }}
             className={cn(
-              'flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-extrabold shrink-0 mr-2 sm:mr-3 transition-all duration-200 cursor-pointer shadow-sm group select-none',
+              'flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm font-extrabold shrink-0 mr-2 sm:mr-3 transition-all duration-200 cursor-pointer shadow-sm group select-none',
               isDropdownOpen
-                ? 'bg-[#e50914] text-white border border-[#e50914] shadow-lg shadow-[#e50914]/40 scale-[1.02]'
+                ? 'bg-[#e50914] text-white shadow-lg shadow-[#e50914]/40 scale-[1.02]'
                 : 'bg-[#18181f] hover:bg-[#22222b] text-white border border-white/20 hover:border-[#e50914]'
             )}
           >
@@ -229,41 +279,94 @@ export function StickyNav({ searchQuery = '', onSearchChange }: StickyNavProps) 
             <ChevronDown className={cn('w-3 h-3 sm:w-3.5 sm:h-3.5 text-zinc-400 group-hover:text-white transition-transform duration-200', isDropdownOpen && 'rotate-180 text-white')} />
           </button>
 
-          {/* Випадаючий акуратний список без окремого модального вікна */}
+          {/* Прозорий повнорозмірний бекдроп для безпечного закриття меню без відкриття карток під ним */}
           {isDropdownOpen && (
-            <div className="absolute left-0 top-full mt-2 w-72 sm:w-80 max-h-[75vh] overflow-y-auto rounded-2xl bg-[#0f0f14]/98 backdrop-blur-2xl border border-white/15 p-2 shadow-2xl shadow-black/80 z-50 animate-in fade-in zoom-in-95 duration-150">
-              <div className="px-3 py-2 border-b border-white/5 mb-1 flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                  {locale === 'pl' ? 'Wszystkie kategorie' : 'Усі категорії'}
-                </span>
-                <span className="text-[10px] font-medium text-zinc-500 bg-white/5 px-2 py-0.5 rounded-full">
-                  {categories.length}
-                </span>
-              </div>
+            <div
+              className="fixed inset-0 z-40 bg-transparent cursor-default touch-none"
+              onTouchStart={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsDropdownOpen(false);
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsDropdownOpen(false);
+              }}
+            />
+          )}
 
-              <div className="flex flex-col gap-0.5">
-                {categories.map((cat) => {
-                  const isActive = cat.id === activeCategory;
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => scrollToCategory(cat.id)}
-                      className={cn(
-                        'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left text-xs font-semibold transition-all cursor-pointer group',
-                        isActive
-                          ? 'bg-[#e50914] text-white shadow-sm shadow-[#e50914]/40 font-bold'
-                          : 'text-zinc-300 hover:text-white hover:bg-white/10'
-                      )}
-                    >
-                      <span className="truncate">{cat.name[locale]}</span>
-                      {isActive ? (
-                        <Check className="w-3.5 h-3.5 text-white shrink-0" />
-                      ) : (
-                        <span className="w-1.5 h-1.5 rounded-full bg-transparent group-hover:bg-[#e50914] transition-colors shrink-0" />
-                      )}
-                    </button>
-                  );
-                })}
+          {/* Випадаючий акуратний список категорій у формі клинка */}
+          {isDropdownOpen && (
+            <div
+              style={{
+                clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)',
+              }}
+              className="absolute left-0 top-full mt-2 w-72 sm:w-84 max-h-[75vh] p-[1px] bg-white/20 shadow-2xl shadow-black/90 z-50 animate-in fade-in zoom-in-95 duration-150"
+            >
+              <div
+                style={{
+                  clipPath: 'polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px)',
+                }}
+                className="w-full h-full max-h-[75vh] overflow-y-auto bg-[#0d0d12] backdrop-blur-2xl p-2.5 flex flex-col no-scrollbar"
+              >
+                <div className="px-3 py-2 border-b border-white/10 mb-1.5 flex items-center justify-between">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-zinc-400">
+                    {locale === 'pl' ? 'Wybierz kategorię' : 'Оберіть категорію'}
+                  </span>
+                  <span className="text-[11px] font-bold text-zinc-400 bg-white/5 px-2 py-0.5 rounded-full">
+                    {categories.length} {locale === 'pl' ? 'sekcji' : 'розділів'}
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  {categories.map((cat) => {
+                    const isActive = cat.id === activeCategory;
+                    const count = categoryCounts[cat.id] || 0;
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => scrollToCategory(cat.id)}
+                        style={{
+                          clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)',
+                        }}
+                        className={cn(
+                          'w-full flex items-center justify-between gap-2 px-3 py-2 text-left transition-all cursor-pointer group select-none',
+                          isActive
+                            ? 'bg-gradient-to-r from-[#e50914]/25 to-[#e50914]/10 border-l-2 border-[#e50914] text-white font-extrabold shadow-sm'
+                            : 'text-zinc-300 hover:text-white hover:bg-white/10'
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            'truncate shrink-0 transition-all',
+                            isActive ? 'text-sm sm:text-base font-extrabold text-white' : 'text-xs sm:text-sm font-semibold'
+                          )}
+                        >
+                          {cat.name[locale]}
+                        </span>
+
+                        {/* Елегантна пунктирна лінія-заповнювач між назвою та кількістю */}
+                        <span
+                          className={cn(
+                            'flex-1 border-b border-dotted transition-colors min-w-4',
+                            isActive ? 'border-[#e50914]/50' : 'border-white/15 group-hover:border-white/30'
+                          )}
+                        />
+
+                        {/* Кількість позицій із підписом поз. */}
+                        <span
+                          className={cn(
+                            'text-xs sm:text-sm font-bold tracking-tight shrink-0 transition-colors',
+                            isActive ? 'text-red-300 font-extrabold' : 'text-zinc-400 group-hover:text-zinc-200'
+                          )}
+                        >
+                          {count} {locale === 'pl' ? 'poz.' : 'поз.'}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
@@ -272,9 +375,9 @@ export function StickyNav({ searchQuery = '', onSearchChange }: StickyNavProps) 
         {/* Розділювач */}
         <div className="h-5 w-[1px] bg-white/10 mr-1.5 sm:mr-2 shrink-0 hidden sm:block" />
 
-        {/* Контейнер стрічки категорій зі своїми локальними градієнтними масками */}
+        {/* Контейнер стрічки категорій: на мобільному заборонено ручний скрол та кліки (суто візуальний індикатор) */}
         <div className="relative flex-1 min-w-0 flex items-center">
-          {/* Кнопка скролу вліво (попередня категорія по колу) */}
+          {/* Кнопка скролу вліво (попередня категорія по колу) - тільки десктоп */}
           <button
             onClick={() => stepCategory('prev')}
             aria-label="Попередня категорія"
@@ -287,10 +390,10 @@ export function StickyNav({ searchQuery = '', onSearchChange }: StickyNavProps) 
           <div className="pointer-events-none absolute left-0 md:left-8 top-0 bottom-0 w-6 sm:w-8 bg-gradient-to-r from-[#07070a] to-transparent z-10" />
           <div className="pointer-events-none absolute right-0 md:right-8 top-0 bottom-0 w-6 sm:w-8 bg-gradient-to-l from-[#07070a] to-transparent z-10" />
 
-          {/* Циклічна нескінченна стрічка з активним розділом строго по центру */}
+          {/* Циклічна стрічка: на мобільному touch-none, pointer-events-none, без ручного скролу */}
           <div
             ref={navRef}
-            className="flex items-center gap-1 sm:gap-3 overflow-x-auto no-scrollbar scroll-smooth py-2 sm:py-2.5 w-full px-2"
+            className="flex items-center gap-1 sm:gap-3 overflow-x-auto sm:overflow-x-auto no-scrollbar scroll-smooth py-2 sm:py-2.5 w-full px-2 touch-none sm:touch-auto pointer-events-none sm:pointer-events-auto select-none"
             aria-label="Категорії меню"
           >
           {cyclicItems.map(({ category, offset }) => {
@@ -300,11 +403,12 @@ export function StickyNav({ searchQuery = '', onSearchChange }: StickyNavProps) 
                   key={`${category.id}-${offset}`}
                   data-is-center={isCenter ? 'true' : 'false'}
                   onClick={() => scrollToCategory(category.id)}
+                  tabIndex={-1}
                   className={cn(
-                    'relative px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-300 ease-out cursor-pointer shrink-0 select-none',
+                    'relative px-3 sm:px-4 py-2 text-sm sm:text-base font-bold whitespace-nowrap transition-all duration-300 ease-out cursor-default sm:cursor-pointer shrink-0 select-none',
                     isCenter
                       ? 'text-white scale-105'
-                      : 'text-zinc-500 hover:text-zinc-300 opacity-60 hover:opacity-100 scale-100'
+                      : 'text-zinc-500 sm:hover:text-zinc-300 opacity-60 sm:hover:opacity-100 scale-100'
                   )}
                 >
                   <span className="relative z-10 transition-colors duration-300">{category.name[locale]}</span>
@@ -345,7 +449,7 @@ export function StickyNav({ searchQuery = '', onSearchChange }: StickyNavProps) 
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
                   placeholder={locale === 'pl' ? 'Szukaj...' : 'Пошук...'}
-                  className="w-36 sm:w-52 pl-8 pr-7 py-1.5 rounded-xl bg-[#13131a] border border-[#e50914]/60 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#e50914] shadow-md shadow-black/50"
+                  className="w-36 sm:w-52 pl-8 pr-7 py-1.5 rounded-xl bg-[#13131a] border border-[#e50914]/60 text-base sm:text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#e50914] shadow-md shadow-black/50"
                 />
                 {searchQuery ? (
                   <button

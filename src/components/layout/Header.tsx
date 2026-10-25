@@ -149,13 +149,16 @@ export function Header() {
               </button>
             </div>
 
-            {/* Реактивна кнопка кошика з анімацією імпульсу */}
+            {/* Реактивна кнопка кошика з формою клинка та анімацією імпульсу */}
             <button
               onClick={toggleCart}
               id="cart-trigger-button"
               aria-label={t.cart.title}
-              className={`relative flex items-center gap-2 bg-[#e50914] hover:bg-[#f4222d] text-white px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl shadow-md shadow-[#e50914]/25 hover:shadow-[#e50914]/40 active:scale-95 transition-all duration-200 cursor-pointer font-bold text-xs sm:text-sm ${
-                isBumping ? 'scale-110 shadow-lg shadow-[#e50914]/50 ring-2 ring-white/40' : ''
+              style={{
+                clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
+              }}
+              className={`relative flex items-center gap-2 bg-[#e50914] hover:bg-[#f4222d] text-white px-3 py-1.5 sm:px-4 sm:py-2 shadow-md shadow-[#e50914]/25 hover:shadow-[#e50914]/40 active:scale-95 transition-all duration-200 cursor-pointer font-bold text-xs sm:text-sm select-none ${
+                isBumping ? 'scale-110 shadow-lg shadow-[#e50914]/50' : ''
               }`}
             >
               <div className="relative">

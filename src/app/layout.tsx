@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
-import { Outfit, Syne } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
+import { Outfit, Unbounded } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
 
@@ -9,10 +9,10 @@ const outfit = Outfit({
   display: 'swap',
 });
 
-const syne = Syne({
-  subsets: ['latin'],
-  weight: ['700', '800'],
-  variable: '--font-syne',
+const unbounded = Unbounded({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['700', '800', '900'],
+  variable: '--font-unbounded',
   display: 'swap',
 });
 
@@ -22,11 +22,24 @@ const edoSZ = localFont({
   display: 'swap',
 });
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
   title: 'Maks Sushi — Dostawa Sushi & Japanese Food',
   description: 'Świeże sushi, zestawy i rolki z szybką dostawą w 30 minut. Najwyższa jakość, świeży łosoś i tradycyjne japońskie receptury.',
   icons: {
-    icon: '/images/logo.jpg',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icon.png' },
+    ],
   },
 };
 
@@ -36,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pl" suppressHydrationWarning className={`${outfit.variable} ${syne.variable} ${edoSZ.variable} dark antialiased`}>
+    <html lang="pl" suppressHydrationWarning className={`${outfit.variable} ${unbounded.variable} ${edoSZ.variable} dark antialiased`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
