@@ -171,33 +171,6 @@ export function StickyNav({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [onSelectCategory]);
 
-  // Коли пошуковий запит змінюється або скидається, одразу синхронізуємо активну категорію з реальною позицією на сторінці
-  useEffect(() => {
-    // Невеличкий таймаут, щоб DOM встиг оновитися після виходу з режиму фільтрації
-    const timer = setTimeout(() => {
-      const isDesktop = window.innerWidth >= 640;
-      const scrollPosition = window.scrollY + (isDesktop ? 220 : 160);
-
-      for (let i = categories.length - 1; i >= 0; i--) {
-        const cat = categories[i];
-        const el = document.getElementById(`category-${cat.id}`);
-        if (el) {
-          const top = el.offsetTop;
-          if (scrollPosition >= top) {
-            setActiveCategory(cat.id);
-            return;
-          }
-        }
-      }
-      // Якщо ми на самому початку або вище першої категорії — ставимо першу категорію
-      if (categories[0]) {
-        setActiveCategory(categories[0].id);
-      }
-    }, 50);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
   // Обчислення циклічного списку: активний елемент завжди строго в центрі,
   // а попередні та наступні категорії безперервно зациклюються по колу
   const activeIndex = categories.findIndex((c) => c.id === activeCategory);

@@ -58,12 +58,7 @@ export function MenuCatalog() {
 
   const handleSearchChange = useCallback((query: string) => {
     setSearchQuery(query);
-
-    // Якщо користувач почав вводити пошуковий запит, миттєво піднімаємо до початку результатів пошуку
-    if (query.trim()) {
-      scrollToCatalogTop();
-    }
-  }, [scrollToCatalogTop]);
+  }, []);
 
   const filteredProducts = useMemo(() => {
     let result = products;
