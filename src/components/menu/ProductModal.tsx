@@ -182,11 +182,11 @@ export function ProductModal() {
           <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
         </button>
 
-        {/* Тіло модальної картки (скомпоновано по висоті без вертикального скролу) */}
+        {/* Тіло модальної картки: прямі прямокутні кути без заокруглень */}
         <div
           onTouchStart={handleCardTouchStart}
           onTouchEnd={handleCardTouchEnd}
-          className="relative w-full rounded-2xl sm:rounded-3xl bg-[#111116] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.9)] overflow-hidden text-white animate-in zoom-in-95 duration-200"
+          className="relative w-full bg-[#111116] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.9)] overflow-hidden text-white animate-in zoom-in-95 duration-200"
         >
           {/* Верхня панель (для мобільного: кнопки навігації + індикатор + закриття) */}
           <div className="flex items-center justify-between px-3.5 py-2.5 sm:px-5 sm:py-3 border-b border-white/5 bg-[#16161e]">
@@ -194,19 +194,19 @@ export function ProductModal() {
             <div className="flex items-center gap-1.5 sm:gap-2">
               <button
                 onClick={handlePrevCard}
-                className="sm:hidden flex items-center justify-center w-7 h-7 rounded-lg bg-white/5 hover:bg-white/15 text-zinc-300 active:scale-90 transition-all cursor-pointer"
+                className="sm:hidden flex items-center justify-center w-7 h-7 bg-white/5 hover:bg-white/15 text-zinc-300 active:scale-90 transition-all cursor-pointer"
                 aria-label="Попередній"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
 
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-400 bg-black/40 px-2 py-0.5 rounded-md border border-white/5">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-400 bg-black/40 px-2 py-0.5 border border-white/5">
                 {currentIndex + 1} / {products.length}
               </span>
 
               <button
                 onClick={handleNextCard}
-                className="sm:hidden flex items-center justify-center w-7 h-7 rounded-lg bg-white/5 hover:bg-white/15 text-zinc-300 active:scale-90 transition-all cursor-pointer"
+                className="sm:hidden flex items-center justify-center w-7 h-7 bg-white/5 hover:bg-white/15 text-zinc-300 active:scale-90 transition-all cursor-pointer"
                 aria-label="Наступний"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -221,30 +221,28 @@ export function ProductModal() {
             <button
               onClick={handleClose}
               aria-label="Закрити"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/5 text-zinc-400 hover:text-white hover:bg-white/15 active:scale-90 transition-all cursor-pointer"
+              className="inline-flex h-8 w-8 items-center justify-center bg-white/5 text-zinc-400 hover:text-white hover:bg-white/15 active:scale-90 transition-all cursor-pointer"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
           {/* Внутрішній вміст: 2 колонки для ролів, 1 центрована елегантна колонка для додатків */}
-          <div className={`p-3.5 sm:p-5 flex flex-col ${selectedProduct.categoryId === 'dodatki' ? 'max-w-md mx-auto w-full' : 'sm:flex-row'} gap-4 sm:gap-6 items-stretch`}>
-            {/* Ліва колонка: Фотографія ролу (прихована для додатків) */}
+          <div className={`p-3.5 sm:p-5 flex flex-col ${selectedProduct.categoryId === 'dodatki' ? 'max-w-md mx-auto w-full' : 'sm:flex-row'} gap-4 sm:gap-6 items-center sm:items-start`}>
+            {/* Ліва колонка: Фотографія ролу (прихована для додатків) - прямокутник з чистим чорним фоном */}
             {selectedProduct.categoryId !== 'dodatki' && (
               <div
                 onTouchStart={handlePhotoTouchStart}
                 onTouchEnd={handlePhotoTouchEnd}
-                className="relative w-full sm:w-1/2 flex flex-col items-center justify-center bg-black/60 rounded-xl sm:rounded-2xl border border-white/5 p-3 overflow-hidden flex-shrink-0"
+                className="relative w-full sm:w-1/2 aspect-[4/3] flex items-center justify-center bg-black border border-white/10 p-4 overflow-hidden flex-shrink-0 shadow-md shadow-black/80"
               >
-              {/* Фото ролу з ефектом drop-shadow */}
-              <div className="relative w-36 h-36 sm:w-52 sm:h-52 flex items-center justify-center">
-                <img
-                  key={productImages[currentImageIndex]}
-                  src={productImages[currentImageIndex]}
-                  alt={selectedProduct.name[locale]}
-                  className="w-full h-full object-contain filter drop-shadow-[0_8px_20px_rgba(0,0,0,0.9)] animate-in fade-in duration-200"
-                />
-              </div>
+              {/* Фото ролу з об'ємною тінню */}
+              <img
+                key={productImages[currentImageIndex]}
+                src={productImages[currentImageIndex]}
+                alt={selectedProduct.name[locale]}
+                className="w-full h-full object-contain filter drop-shadow-[0_8px_20px_rgba(0,0,0,0.95)] animate-in fade-in duration-200"
+              />
 
               {/* Стрілочки галереї на десктопі (тільки якщо у ролу > 1 фото) */}
               {hasMultipleImages && (
@@ -295,28 +293,11 @@ export function ProductModal() {
                 </>
               )}
 
-              {/* Плашка ваги та шматочків (розміщена внизу фото) */}
-              {!hasMultipleImages && (
-                <div className="mt-1 flex items-center gap-2 bg-black/80 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-zinc-300 border border-white/10">
-                  <Scale className="w-3 h-3 text-[#e50914]" />
-                  <span>
-                    {selectedProduct.weight} {t.product.weight}
-                  </span>
-                  {selectedProduct.pieces && (
-                    <>
-                      <span className="text-zinc-600">•</span>
-                      <span>
-                        {selectedProduct.pieces} {t.product.pieces}
-                      </span>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
+              </div>
             )}
 
-            {/* Колонка: Інформація, Інгредієнти, Ціна та Замовлення */}
-            <div className={`w-full ${selectedProduct.categoryId === 'dodatki' ? 'w-full' : 'sm:w-1/2'} flex flex-col justify-between gap-3`}>
+            {/* Колонка: Інформація, Інгредієнти, Кількість/Вага, Ціна та Замовлення */}
+            <div className={`w-full ${selectedProduct.categoryId === 'dodatki' ? 'w-full' : 'sm:w-1/2'} flex flex-col gap-3 sm:gap-3.5`}>
               <div>
                 {/* Назва ролу капсом */}
                 <h2 className="text-base sm:text-xl font-black uppercase tracking-wide text-white leading-tight">
@@ -344,10 +325,31 @@ export function ProductModal() {
                     ))}
                   </div>
                 </div>
+
+                {/* Кількість шматочків та вага: акуратно винесені під складники без рамки */}
+                {(selectedProduct.weight || selectedProduct.pieces) && (
+                  <div className="mt-2.5 pt-2 border-t border-white/5 flex items-center gap-3 text-xs text-zinc-400 font-medium">
+                    {selectedProduct.pieces && (
+                      <span className="flex items-center gap-1.5">
+                        <span className="text-zinc-500">{t.product.pieces}:</span>
+                        <strong className="text-white font-bold">{selectedProduct.pieces} {locale === 'pl' ? 'szt.' : 'шт.'}</strong>
+                      </span>
+                    )}
+                    {selectedProduct.pieces && selectedProduct.weight && (
+                      <span className="text-zinc-600">•</span>
+                    )}
+                    {selectedProduct.weight && (
+                      <span className="flex items-center gap-1.5">
+                        <span className="text-zinc-500">{t.product.weight}:</span>
+                        <strong className="text-white font-bold">{selectedProduct.weight} {selectedProduct.categoryId === 'dodatki' && selectedProduct.id.includes('sos') ? 'ml' : 'g'}</strong>
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Нижня частина: вибір кількості та кнопка замовлення з ціною */}
-              <div className="pt-2.5 border-t border-white/10 flex items-center gap-2.5 sm:gap-3">
+              <div className="pt-3 border-t border-white/10 flex items-center gap-2.5 sm:gap-3">
                 {/* Лічильник кількості у формі клинка */}
                 <div
                   style={{

@@ -12,6 +12,8 @@ interface StickyNavProps {
   onSearchChange?: (query: string) => void;
   selectedCategory?: string;
   onSelectCategory?: (categoryId: string) => void;
+  onBackToFolders?: () => void;
+  isInsideCategory?: boolean;
 }
 
 export function StickyNav({
@@ -19,6 +21,8 @@ export function StickyNav({
   onSearchChange,
   selectedCategory,
   onSelectCategory,
+  onBackToFolders,
+  isInsideCategory = false,
 }: StickyNavProps) {
   const { locale } = useI18n();
   const setIsMenuOpenStore = useCartStore((s) => s.setIsMenuOpen);
@@ -345,112 +349,171 @@ export function StickyNav({
           )}
         </div>
 
-        {/* Розділювач */}
-        <div className="h-5 w-[1px] bg-white/10 mr-1.5 sm:mr-2 shrink-0 hidden sm:block" />
+        {/* Розділювач (тільки коли стрічка категорій активна) */}
+        {!isInsideCategory && (
+          <div className="h-5 w-[1px] bg-white/10 mr-1.5 sm:mr-2 shrink-0 hidden sm:block" />
+        )}
 
-        {/* Контейнер стрічки категорій: на мобільному заборонено ручний скрол та кліки (суто візуальний індикатор) */}
-        <div className="relative flex-1 min-w-0 flex items-center">
-          {/* Кнопка скролу вліво (попередня категорія по колу) - тільки десктоп */}
-          <button
-            onClick={() => stepCategory('prev')}
-            aria-label="Попередня категорія"
-            className="hidden md:flex items-center justify-center w-7 h-7 rounded-full bg-white/5 hover:bg-white/15 text-zinc-400 hover:text-white transition-all mr-1 cursor-pointer shrink-0 z-10"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
+        {/* Контейнер стрічки категорій: на мобільному при відкритті пошуку повністю приховується, звільняючи простір ліворуч */}
+        {!isInsideCategory ? (
+          <div className={cn(
+            "relative flex-1 min-w-0 items-center transition-all",
+            isSearchOpen ? "hidden sm:flex" : "flex"
+          )}>
+            {/* Кнопка скролу вліво (попередня категорія по колу) - тільки десктоп */}
+            <button
+              onClick={() => stepCategory('prev')}
+              aria-label="Попередня категорія"
+              className="hidden md:flex items-center justify-center w-7 h-7 rounded-full bg-white/5 hover:bg-white/15 text-zinc-400 hover:text-white transition-all mr-1 cursor-pointer shrink-0 z-10"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
 
-          {/* М'які градієнтні маски виключно над стрічкою категорій, які не налізають на кнопку Меню */}
-          <div className="pointer-events-none absolute left-0 md:left-8 top-0 bottom-0 w-6 sm:w-8 bg-gradient-to-r from-[#07070a] to-transparent z-10" />
-          <div className="pointer-events-none absolute right-0 md:right-8 top-0 bottom-0 w-6 sm:w-8 bg-gradient-to-l from-[#07070a] to-transparent z-10" />
+            {/* М'які градієнтні маски виключно над стрічкою категорій, які не налізають на кнопку Меню */}
+            <div className="pointer-events-none absolute left-0 md:left-8 top-0 bottom-0 w-6 sm:w-8 bg-gradient-to-r from-[#07070a] to-transparent z-10" />
+            <div className="pointer-events-none absolute right-0 md:right-8 top-0 bottom-0 w-6 sm:w-8 bg-gradient-to-l from-[#07070a] to-transparent z-10" />
 
-          {/* Циклічна стрічка: на мобільному touch-none, pointer-events-none, без ручного скролу */}
-          <div
-            ref={navRef}
-            className="flex items-center gap-1 sm:gap-3 overflow-x-auto sm:overflow-x-auto no-scrollbar scroll-smooth py-2 sm:py-2.5 w-full px-2 touch-none sm:touch-auto pointer-events-none sm:pointer-events-auto select-none"
-            aria-label="Категорії меню"
-          >
-          {cyclicItems.map(({ category, offset }) => {
-            const isCenter = offset === 0;
-            return (
-                <button
-                  key={`${category.id}-${offset}`}
-                  data-is-center={isCenter ? 'true' : 'false'}
-                  onClick={() => scrollToCategory(category.id)}
-                  tabIndex={-1}
-                  className={cn(
-                    'relative px-3 sm:px-4 py-2 text-sm sm:text-base font-bold whitespace-nowrap transition-all duration-300 ease-out cursor-default sm:cursor-pointer shrink-0 select-none',
-                    isCenter
-                      ? 'text-white scale-105'
-                      : 'text-zinc-500 sm:hover:text-zinc-300 opacity-60 sm:hover:opacity-100 scale-100'
-                  )}
-                >
-                  <span className="relative z-10 transition-colors duration-300">{category.name[locale]}</span>
-
-                  {/* Неонова рубінова лінія підкреслення під центральним активним розділом з м'якою анімацією появи */}
-                  <span
+            {/* Циклічна стрічка: на мобільному touch-none, pointer-events-none, без ручного скролу */}
+            <div
+              ref={navRef}
+              className="flex items-center gap-1 sm:gap-3 overflow-x-auto sm:overflow-x-auto no-scrollbar scroll-smooth py-2 sm:py-2.5 w-full px-2 touch-none sm:touch-auto pointer-events-none sm:pointer-events-auto select-none"
+              aria-label="Категорії меню"
+            >
+            {cyclicItems.map(({ category, offset }) => {
+              const isCenter = offset === 0;
+              return (
+                  <button
+                    key={`${category.id}-${offset}`}
+                    data-is-center={isCenter ? 'true' : 'false'}
+                    onClick={() => scrollToCategory(category.id)}
+                    tabIndex={-1}
                     className={cn(
-                      'absolute bottom-0 left-3 right-3 h-[2.5px] rounded-full transition-all duration-300 ease-out',
+                      'relative px-3 sm:px-4 py-2 text-sm sm:text-base font-bold whitespace-nowrap transition-all duration-300 ease-out cursor-default sm:cursor-pointer shrink-0 select-none',
                       isCenter
-                        ? 'bg-gradient-to-r from-[#e50914] via-[#ff4d58] to-[#e50914] shadow-[0_0_12px_#e50914] opacity-100 scale-x-100'
-                        : 'opacity-0 scale-x-50 pointer-events-none'
+                        ? 'text-white scale-105'
+                        : 'text-zinc-500 sm:hover:text-zinc-300 opacity-60 sm:hover:opacity-100 scale-100'
                     )}
-                  />
-                </button>
-            );
-          })}
-        </div>
+                  >
+                    <span className="relative z-10 transition-colors duration-300">{category.name[locale]}</span>
 
-        {/* Кнопка скролу вправо (наступна категорія по колу) */}
-        <button
-          onClick={() => stepCategory('next')}
-          aria-label="Наступна категорія"
-          className="hidden md:flex items-center justify-center w-7 h-7 rounded-full bg-white/5 hover:bg-white/15 text-zinc-400 hover:text-white transition-all ml-1 cursor-pointer shrink-0 z-10"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
-        </div>
+                    {/* Неонова рубінова лінія підкреслення під центральним активним розділом з м'якою анімацією появи */}
+                    <span
+                      className={cn(
+                        'absolute bottom-0 left-3 right-3 h-[2.5px] rounded-full transition-all duration-300 ease-out',
+                        isCenter
+                          ? 'bg-gradient-to-r from-[#e50914] via-[#ff4d58] to-[#e50914] shadow-[0_0_12px_#e50914] opacity-100 scale-x-100'
+                          : 'opacity-0 scale-x-50 pointer-events-none'
+                      )}
+                    />
+                  </button>
+              );
+            })}
+          </div>
 
-        {/* Компактний пошук у стікі нав: завжди під рукою */}
+          {/* Кнопка скролу вправо (наступна категорія по колу) */}
+          <button
+            onClick={() => stepCategory('next')}
+            aria-label="Наступна категорія"
+            className="hidden md:flex items-center justify-center w-7 h-7 rounded-full bg-white/5 hover:bg-white/15 text-zinc-400 hover:text-white transition-all ml-1 cursor-pointer shrink-0 z-10"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+          </div>
+        ) : (
+          /* Коли ми всередині категорії: порожній розширювач для притискання кнопки повернення та пошуку вправо */
+          <div className={cn("flex-1 min-w-0", isSearchOpen ? "hidden sm:block" : "block")} />
+        )}
+
+        {/* Кнопка повернення до всіх категорій у стікі панелі: трохи лівіше від пошуку (на мобільному приховується, якщо відкритий пошук) */}
+        {onBackToFolders && isInsideCategory && (
+          <button
+            type="button"
+            onClick={onBackToFolders}
+            title={locale === 'pl' ? 'Wróć do kategorii' : 'Повернутися до категорій'}
+            className={cn(
+              "items-center gap-1.5 px-3 py-1.5 h-8 sm:h-9 bg-[#18181f] hover:bg-[#22222b] text-zinc-200 hover:text-white border border-white/15 hover:border-[#e50914] text-xs font-bold shrink-0 ml-auto mr-2 transition-all cursor-pointer select-none active:scale-95 shadow-xs",
+              isSearchOpen ? "hidden sm:flex" : "flex"
+            )}
+          >
+            <ChevronLeft className="w-4 h-4 text-[#e50914]" />
+            <span className="text-xs">{locale === 'pl' ? 'Kategorie' : 'Категорії'}</span>
+          </button>
+        )}
+
+        {/* Прозорий безпечний бекдроп для мобільного пошуку: при тапі за межами інпуту просто згортає пошук і НЕ відкриває картку чи інші елементи */}
+        {isSearchOpen && (
+          <div
+            className="sm:hidden fixed inset-0 z-10 bg-transparent"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsSearchOpen(false);
+            }}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+            }}
+          />
+        )}
+
+        {/* Пошук у стікі нав: на комп'ютері ЗАВЖДИ відкрито й готово до вводу, на мобільному — розгортається на всю ширину до кнопки Меню */}
         {onSearchChange && (
-          <div className="relative shrink-0 ml-1.5 sm:ml-3 z-20 flex items-center" ref={searchBoxRef}>
-            {isSearchOpen || searchQuery ? (
-              <div className="relative flex items-center animate-in fade-in duration-200">
-                <Search className="absolute left-2.5 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => onSearchChange(e.target.value)}
-                  placeholder={locale === 'pl' ? 'Szukaj...' : 'Пошук...'}
-                  className="w-36 sm:w-52 pl-8 pr-7 py-1.5 rounded-xl bg-[#13131a] border border-[#e50914]/60 text-base sm:text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#e50914] shadow-md shadow-black/50"
-                />
-                {searchQuery ? (
+          <div
+            className={cn(
+              "relative z-20 flex items-center transition-all",
+              isSearchOpen ? "flex-1 sm:flex-initial min-w-0 ml-2 sm:ml-0" : "shrink-0 ml-auto sm:ml-0"
+            )}
+            ref={searchBoxRef}
+          >
+            {/* На десктопі (sm і вище) поле ЗАВЖДИ відкрите. На мобілці показується коли isSearchOpen */}
+            <div className={cn(
+              'items-center animate-in fade-in duration-200 w-full',
+              isSearchOpen ? 'flex' : 'hidden sm:flex'
+            )}>
+              <Search className="absolute left-3 w-4 h-4 text-zinc-400 pointer-events-none shrink-0" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                placeholder={locale === 'pl' ? 'Szukaj ulubionych dań...' : 'Пошук улюблених страв...'}
+                className="w-full sm:w-64 md:w-80 lg:w-96 pl-9 pr-8 py-2 bg-[#13131a] border border-[#e50914]/70 text-base sm:text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#e50914] shadow-md shadow-black/50"
+              />
+              {searchQuery ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onSearchChange('');
+                    searchInputRef.current?.focus();
+                  }}
+                  className="absolute right-2.5 text-zinc-400 hover:text-white text-xs cursor-pointer p-0.5"
+                  title={locale === 'pl' ? 'Wyczyść' : 'Очистити'}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              ) : (
+                /* На мобільних: кнопка згортання, якщо поле порожнє */
+                isSearchOpen && (
                   <button
-                    onClick={() => {
-                      onSearchChange('');
-                      searchInputRef.current?.focus();
-                    }}
-                    className="absolute right-2 text-zinc-400 hover:text-white text-xs cursor-pointer"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                ) : (
-                  <button
+                    type="button"
                     onClick={() => setIsSearchOpen(false)}
-                    className="absolute right-2 text-zinc-500 hover:text-zinc-300 text-xs cursor-pointer"
+                    className="sm:hidden absolute right-2.5 text-zinc-500 hover:text-zinc-300 text-xs cursor-pointer p-0.5"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
-                )}
-              </div>
-            ) : (
+                )
+              )}
+            </div>
+
+            {/* Мобільна кнопка пошуку (прихована на десктопі або коли пошук розгорнутий) */}
+            {!isSearchOpen && (
               <button
+                type="button"
                 onClick={toggleSearch}
                 aria-label="Пошук у меню"
                 title={locale === 'pl' ? 'Szukaj w menu' : 'Пошук у меню'}
-                className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#18181f] hover:bg-[#22222b] text-zinc-300 hover:text-white border border-white/15 hover:border-[#e50914] transition-all cursor-pointer shadow-xs group"
+                className="sm:hidden flex items-center justify-center w-8 h-8 rounded-none bg-[#18181f] hover:bg-[#22222b] text-zinc-300 hover:text-white border border-white/15 hover:border-[#e50914] transition-all cursor-pointer shadow-xs group"
               >
-                <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#e50914] group-hover:scale-110 transition-transform" />
+                <Search className="w-3.5 h-3.5 text-[#e50914] group-hover:scale-110 transition-transform" />
               </button>
             )}
           </div>

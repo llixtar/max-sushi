@@ -7,24 +7,27 @@ export function HeroBanner() {
   const { locale } = useI18n();
 
   const scrollToMenu = () => {
-    const el = document.getElementById('catalog-active-category') || document.getElementById('category-mini-maki') || document.querySelector('section');
-    if (el) {
-      const headerEl = document.querySelector('header');
-      const stickyNavEl = document.querySelector('.sticky.z-30') as HTMLElement | null;
-      const totalStickyHeight = (headerEl?.offsetHeight || 105) + (stickyNavEl?.offsetHeight || 60);
-      const safetyMargin = 15;
-      const totalOffset = totalStickyHeight + safetyMargin;
+    // Завжди повертаємо каталог до початкового стану (сітка з папками/зображеннями категорій)
+    window.dispatchEvent(new CustomEvent('reset-to-initial-catalog'));
 
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = el.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = Math.max(0, elementPosition - totalOffset);
+    // Невеликий тайймаут щоб стан у MenuCatalog встиг оновитися і відрендерити categories-folders-grid
+    setTimeout(() => {
+      const el = document.getElementById('categories-folders-grid') || document.querySelector('section');
+      if (el) {
+        const headerEl = document.querySelector('header');
+        const totalStickyHeight = (headerEl?.offsetHeight || 105) + 15;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-    }
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = el.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = Math.max(0, elementPosition - totalStickyHeight);
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
+    }, 20);
   };
 
   return (
@@ -45,12 +48,37 @@ export function HeroBanner() {
       {/* Верхня частина з заголовком — відцентрована */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-4 sm:pt-6">
         <div className="max-w-5xl mx-auto text-center px-2">
-          {/* Акцентований заголовок у сучасному преміальному шрифті Unbounded (ідеально для кирилиці та латиниці) */}
+          {/* Заголовок у чистому, бездоганно читабельному Montserrat з повною підтримкою Ś, ę, ą, та кирилиці */}
           <h1 
-            style={{ fontFamily: 'var(--font-unbounded), "Unbounded", sans-serif' }}
-            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#fdf8f4] tracking-tight leading-[1.15] drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] max-w-full break-words"
+            style={{ 
+              fontFamily: 'var(--font-knewave), "Knewave", cursive, sans-serif',
+              WebkitTextStroke: '0.4px #09090b',
+              paintOrder: 'stroke fill',
+            }}
+            className="text-[2.65rem] xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-normal text-[#fdf8f4] tracking-wide leading-[1.12] drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] max-w-full break-normal"
           >
-            {locale === 'pl' ? 'Najlepsze Sushi w Świdnicy' : 'Найкращі Суші у Свідниці'}
+            {locale === 'pl' ? (
+              <>
+                Najlepsze Sushi w{' '}
+                <span className="whitespace-nowrap inline-block">
+                  <span className="inline-block relative">
+                    <span className="inline-block">S</span>
+                    <span 
+                      aria-hidden="true" 
+                      className="absolute -top-[0.22em] left-[0.28em] text-[0.65em] font-black pointer-events-none select-none text-[#fdf8f4]"
+                      style={{ transform: 'rotate(18deg)' }}
+                    >
+                      ˊ
+                    </span>
+                  </span>
+                  widnicy
+                </span>
+              </>
+            ) : (
+              <span className="whitespace-nowrap inline-block">
+                Найкращі Суші у Свідниці
+              </span>
+            )}
           </h1>
         </div>
       </div>

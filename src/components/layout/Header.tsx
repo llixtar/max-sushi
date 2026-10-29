@@ -93,6 +93,9 @@ export function Header() {
             <Link
               href={`/${locale}`}
               onClick={(e) => {
+                // Скидаємо відкриту категорію та пошук до початкового стану головної сторінки
+                window.dispatchEvent(new CustomEvent('reset-to-initial-catalog'));
+
                 // Якщо вже знаходимось на цій сторінці, миттєво переходимо на самий верх
                 if (window.location.pathname.startsWith(`/${locale}`)) {
                   e.preventDefault();

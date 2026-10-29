@@ -88,20 +88,20 @@ export function ProductCard({ product }: ProductCardProps) {
         }}
         className="w-full h-full flex flex-col justify-between p-4 sm:p-5 bg-[#0d0d12] group-hover:bg-[#13131c] transition-colors duration-300"
       >
-      {/* Верхня частина: Кругле зображення по центру, потім назва, вага/шматочки та склад */}
-      <div className="flex flex-col items-center text-center">
-        {/* Кругле фото ролу по центру зверху */}
+      {/* Верхня частина: Прямокутне зображення майже на всю ширину картки, назва, грамовка та склад */}
+      <div className="flex flex-col text-left">
+        {/* Просте прямокутне зображення страви з глибоким чорним фоном */}
         {!isDodatki ? (
-          <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-black/80 border border-white/10 group-hover:border-[#e50914]/40 flex items-center justify-center p-2 mb-3.5 transition-all duration-300 group-hover:scale-105 shadow-lg shadow-black/80">
+          <div className="relative w-full aspect-[16/11] overflow-hidden bg-black border border-white/10 group-hover:border-[#e50914]/40 flex items-center justify-center p-2 sm:p-2.5 mb-3 transition-colors duration-300 shadow-md shadow-black/80">
             <img
               src={product.image}
               alt={product.name[locale]}
               loading="lazy"
-              className="w-full h-full object-contain filter drop-shadow-[0_6px_12px_rgba(0,0,0,0.9)]"
+              className="w-full h-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.95)] transition-transform duration-300"
             />
           </div>
         ) : (
-          <div className="w-16 h-16 rounded-full bg-[#181824] border border-white/10 flex items-center justify-center text-[#e50914] font-black text-xl mb-3">
+          <div className="w-full aspect-[16/9] bg-[#181824] border border-white/10 flex items-center justify-center text-[#e50914] font-black text-2xl mb-3 shadow-inner">
             +
           </div>
         )}
@@ -112,7 +112,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </h3>
 
         {/* Характеристики (шматочки / вага) */}
-        <div className="flex items-center justify-center gap-2 text-xs font-semibold text-zinc-400 mb-2">
+        <div className="flex items-center justify-start gap-2 text-xs font-semibold text-zinc-400 mb-2">
           {product.pieces && (
             <span>{product.pieces} {locale === 'pl' ? 'szt.' : 'шт.'}</span>
           )}
@@ -123,7 +123,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Склад ролу через крапочки або комки */}
-        <p className="text-[11px] sm:text-xs text-zinc-400/90 font-normal leading-relaxed line-clamp-2 px-1 mb-2">
+        <p className="text-[11px] sm:text-xs text-zinc-400/90 font-normal leading-relaxed line-clamp-2 mb-2">
           {product.ingredients[locale].join(' • ')}
         </p>
       </div>

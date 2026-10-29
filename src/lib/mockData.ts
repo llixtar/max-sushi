@@ -8,6 +8,7 @@ export const categories: Category[] = [
       uk: 'Міні Макі',
     },
     icon: 'CircleDot',
+    image: '/images/mini-maki/maki-awokado.jpg',
   },
   {
     id: 'futomaki',
@@ -16,6 +17,7 @@ export const categories: Category[] = [
       uk: 'Футомакі',
     },
     icon: 'CircleDot',
+    image: '/images/futomaki/futomaki-bangkok.jpg',
   },
   {
     id: 'rolki',
@@ -24,6 +26,7 @@ export const categories: Category[] = [
       uk: 'Роли',
     },
     icon: 'Fish',
+    image: '/images/rolki/bonito.jpg',
   },
   {
     id: 'lux-rolki',
@@ -32,6 +35,7 @@ export const categories: Category[] = [
       uk: 'Люкс Роли',
     },
     icon: 'Sparkles',
+    image: '/images/lux-rolki/azuma.jpg',
   },
   {
     id: 'pieczone-rolki',
@@ -40,6 +44,7 @@ export const categories: Category[] = [
       uk: 'Запечені Роли',
     },
     icon: 'Flame',
+    image: '/images/pieczone-rolki/japonia.jpg',
   },
   {
     id: 'rolki-tempura',
@@ -48,6 +53,7 @@ export const categories: Category[] = [
       uk: 'Роли в Темпурі',
     },
     icon: 'Zap',
+    image: '/images/rolki-tempura/aloha-nami-roll.jpg',
   },
   {
     id: 'zupy',
@@ -56,6 +62,7 @@ export const categories: Category[] = [
       uk: 'Супи',
     },
     icon: 'Utensils',
+    image: '/images/zupy/miso-zupa-krewetki.jpg',
   },
   {
     id: 'sushi-burgery',
@@ -64,6 +71,7 @@ export const categories: Category[] = [
       uk: 'Суші Бургери',
     },
     icon: 'Sandwich',
+    image: '/images/sushi-burgery/morski-burger.jpg',
   },
   {
     id: 'poke-bowl',
@@ -72,6 +80,7 @@ export const categories: Category[] = [
       uk: 'Поке Боули',
     },
     icon: 'Soup',
+    image: '/images/poke-bowl/poke-krewetki.jpg',
   },
   {
     id: 'przekaski',
@@ -80,6 +89,7 @@ export const categories: Category[] = [
       uk: 'Закуски',
     },
     icon: 'Cookie',
+    image: '/images/przekaski/gyoza-kurczak.jpg',
   },
   {
     id: 'zestawy',
@@ -88,6 +98,7 @@ export const categories: Category[] = [
       uk: 'Сети',
     },
     icon: 'Layers',
+    image: '/images/zestawy/mega-zestaw.jpg',
   },
   {
     id: 'dodatki',
@@ -96,6 +107,7 @@ export const categories: Category[] = [
       uk: 'Додатки',
     },
     icon: 'PlusCircle',
+    image: '/images/dodatki/imbir.jpg',
   },
 ];
 

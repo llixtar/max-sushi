@@ -1,11 +1,19 @@
 import type { Metadata, Viewport } from 'next';
-import { Outfit, Unbounded } from 'next/font/google';
+import { Montserrat, Knewave, Unbounded } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
 
-const outfit = Outfit({
+const montserrat = Montserrat({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+  variable: '--font-montserrat',
+  display: 'swap',
+});
+
+const knewave = Knewave({
   subsets: ['latin'],
-  variable: '--font-outfit',
+  weight: ['400'],
+  variable: '--font-knewave',
   display: 'swap',
 });
 
@@ -49,18 +57,35 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pl" suppressHydrationWarning className={`${outfit.variable} ${unbounded.variable} ${edoSZ.variable} dark antialiased`}>
+    <html lang="pl" suppressHydrationWarning className={`${montserrat.variable} ${knewave.variable} ${unbounded.variable} ${edoSZ.variable} dark antialiased`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
                 try {
-                  const origSetAttr = Element.prototype.setAttribute;
+                  var origSetAttr = Element.prototype.setAttribute;
                   Element.prototype.setAttribute = function(name, value) {
                     if (name === 'bis_skin_checked') return;
                     return origSetAttr.apply(this, arguments);
                   };
+                  var origSetAttrNS = Element.prototype.setAttributeNS;
+                  Element.prototype.setAttributeNS = function(ns, name, value) {
+                    if (name === 'bis_skin_checked') return;
+                    return origSetAttrNS.apply(this, arguments);
+                  };
+                  // Observe mutations and immediately strip bis_skin_checked if already attached
+                  if (typeof MutationObserver !== 'undefined') {
+                    var observer = new MutationObserver(function(mutations) {
+                      for (var i = 0; i < mutations.length; i++) {
+                        var m = mutations[i];
+                        if (m.type === 'attributes' && m.attributeName === 'bis_skin_checked') {
+                          m.target.removeAttribute('bis_skin_checked');
+                        }
+                      }
+                    });
+                    observer.observe(document.documentElement, { attributes: true, subtree: true, attributeFilter: ['bis_skin_checked'] });
+                  }
                 } catch(e) {}
               })();
             `,

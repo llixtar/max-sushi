@@ -39,6 +39,7 @@ export interface Category {
   id: string;
   name: LocalizedString;
   icon: string;
+  image?: string;
 }
 
 export interface CartItem {

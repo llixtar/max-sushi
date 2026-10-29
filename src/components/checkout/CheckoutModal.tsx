@@ -352,44 +352,57 @@ export function CheckoutModal() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
-                <Input
-                  label={t.checkout.apartment}
-                  id="order-apartment"
-                  placeholder={t.checkout.apartmentPlaceholder}
-                  className="h-8 sm:h-8.5 text-xs"
-                  {...register('apartment')}
-                />
-                <Input
-                  label={t.checkout.floor}
-                  id="order-floor"
-                  placeholder={t.checkout.floorPlaceholder}
-                  className="h-8 sm:h-8.5 text-xs"
-                  {...register('floor')}
-                />
-                <Input
-                  label={t.checkout.entryCode}
-                  id="order-entry-code"
-                  placeholder={t.checkout.entryCodePlaceholder}
-                  className="h-8 sm:h-8.5 text-xs"
-                  {...register('entryCode')}
-                />
+              <div className="grid grid-cols-3 gap-2 items-end">
+                <div className="flex flex-col">
+                  <span className="text-[10px] sm:text-[11px] font-medium text-zinc-300 mb-1 leading-tight h-8 sm:h-7 flex items-end">
+                    {t.checkout.apartment}
+                  </span>
+                  <Input
+                    id="order-apartment"
+                    placeholder={t.checkout.apartmentPlaceholder}
+                    className="h-8.5 text-xs"
+                    {...register('apartment')}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] sm:text-[11px] font-medium text-zinc-300 mb-1 leading-tight h-8 sm:h-7 flex items-end">
+                    {t.checkout.floor}
+                  </span>
+                  <Input
+                    id="order-floor"
+                    placeholder={t.checkout.floorPlaceholder}
+                    className="h-8.5 text-xs"
+                    {...register('floor')}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] sm:text-[11px] font-medium text-zinc-300 mb-1 leading-tight h-8 sm:h-7 flex items-end">
+                    {t.checkout.entryCode}
+                  </span>
+                  <Input
+                    id="order-entry-code"
+                    placeholder={t.checkout.entryCodePlaceholder}
+                    className="h-8.5 text-xs"
+                    {...register('entryCode')}
+                  />
+                </div>
               </div>
             </div>
           )}
 
-          {/* Спосіб оплати: компактний горизонтальний ряд у формі клинка */}
+          {/* Спосіб оплати: рівно 2 опції у формі клинка (залежно від типу доставки) */}
           <div className="space-y-1.5">
             <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
               {t.checkout.paymentTitle}
             </span>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+              {/* 1. Опція BLIK / Karta (і кур'єру, і особисто) */}
               <label
                 style={{
                   clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
                 }}
-                className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 p-2 sm:p-2.5 border cursor-pointer transition-all select-none ${
-                  selectedPayment === 'blik_online'
+                className={`flex items-center justify-start gap-2.5 px-3 py-2.5 sm:p-3 border cursor-pointer transition-all select-none ${
+                  selectedPayment === 'blik_online' || selectedPayment === 'card_courier'
                     ? 'bg-[#e50914]/15 border-[#e50914] text-white shadow-xs'
                     : 'bg-[#171720] border-white/5 text-zinc-400 hover:text-white'
                 }`}
@@ -400,35 +413,16 @@ export function CheckoutModal() {
                   className="sr-only"
                   {...register('paymentMethod')}
                 />
-                <Smartphone className="w-3.5 h-3.5 text-[#e50914] shrink-0" />
-                <span className="text-[11px] sm:text-xs font-bold truncate">{t.checkout.blikOnline}</span>
+                <CreditCard className="w-4 h-4 text-[#e50914] shrink-0" />
+                <span className="text-xs sm:text-sm font-bold truncate">BLIK / Karta</span>
               </label>
 
+              {/* 2. Опція Gotówka (і кур'єру, і особисто) */}
               <label
                 style={{
                   clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
                 }}
-                className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 p-2 sm:p-2.5 border cursor-pointer transition-all select-none ${
-                  selectedPayment === 'card_courier'
-                    ? 'bg-[#e50914]/15 border-[#e50914] text-white shadow-xs'
-                    : 'bg-[#171720] border-white/5 text-zinc-400 hover:text-white'
-                }`}
-              >
-                <input
-                  type="radio"
-                  value="card_courier"
-                  className="sr-only"
-                  {...register('paymentMethod')}
-                />
-                <CreditCard className="w-3.5 h-3.5 text-[#e50914] shrink-0" />
-                <span className="text-[11px] sm:text-xs font-bold truncate">{t.checkout.cardCourier}</span>
-              </label>
-
-              <label
-                style={{
-                  clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
-                }}
-                className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 p-2 sm:p-2.5 border cursor-pointer transition-all select-none ${
+                className={`flex items-center justify-start gap-2.5 px-3 py-2.5 sm:p-3 border cursor-pointer transition-all select-none ${
                   selectedPayment === 'cash'
                     ? 'bg-[#e50914]/15 border-[#e50914] text-white shadow-xs'
                     : 'bg-[#171720] border-white/5 text-zinc-400 hover:text-white'
@@ -440,8 +434,10 @@ export function CheckoutModal() {
                   className="sr-only"
                   {...register('paymentMethod')}
                 />
-                <Banknote className="w-3.5 h-3.5 text-[#e50914] shrink-0" />
-                <span className="text-[11px] sm:text-xs font-bold truncate">{t.checkout.cash}</span>
+                <Banknote className="w-4 h-4 text-[#e50914] shrink-0" />
+                <span className="text-xs sm:text-sm font-bold truncate">
+                  {locale === 'pl' ? 'Gotówka' : 'Готівка'}
+                </span>
               </label>
             </div>
 
